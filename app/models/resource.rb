@@ -62,12 +62,8 @@ class Resource < Sequel::Model
     # @param offset [Numeric] - an offset into the list of returned results
     # @param limit [Numeric] - a maximum number of results to return
     # @param search [String] - a search term in the resource id
-    def search account, kind: nil, owner: nil, offset: nil, limit: nil, search: nil
+    def search kind: nil, owner: nil, offset: nil, limit: nil, search: nil
       scope = self
-      
-      # Search only the user's account.
-      # This can be removed once resource visibility rules are added.
-      scope = scope.where("account(resource_id) = ?", account)
       
       # Filter by kind.
       scope = scope.where("kind(resource_id) = ?", kind) if kind
@@ -103,6 +99,10 @@ class Resource < Sequel::Model
       natural_join(:resources_textsearch).
         where("? @@ textsearch", query).
         order(Sequel.desc(rank))
+    end
+    
+    def visible_to role
+      where resource_id: select(:resource_id).from(:visible_resources).where(role_id: role.id)
     end
   end
 

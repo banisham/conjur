@@ -11,7 +11,7 @@ class ResourcesController < RestController
       options[:owner] = Role[ownerid] or raise Exceptions::RecordNotFound, ownerid
     end
     
-    scope = Resource.search(params[:account], options)
+    scope = Resource.visible_to(current_user).search options
 
     result =
       if params[:count] == 'true'

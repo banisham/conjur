@@ -16,10 +16,6 @@ Before do
   Credentials.new(role: admin_role).save(raise_on_save_failure: true)
 end
 
-Before("@logged-in") do
-  step %Q(I am a user named "alice")
-end
-
 Before("@logged-in-admin") do
   step %Q(I am the super-user)
 end
